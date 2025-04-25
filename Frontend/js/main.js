@@ -3,6 +3,8 @@ const API = '/chat';
 async function send() {
     const msg = document.getElementById('msg').value;
 
+    if (msg.length === 0) return;
+
     await fetch(API, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -10,6 +12,7 @@ async function send() {
     });
     
     document.getElementById('msg').value = '';
+    resizeTextArea();
     load();
 }
 
@@ -22,9 +25,34 @@ async function load() {
 
     data.forEach(msg => {
         const li = document.createElement('li');
-        li.textContent = msg.content;
+
+        const time = new Date(msg.created_at);
+        const localTime = time.toLocaleString();
+        const formattedText = msg.content.replace(/\n/g, "<br>"); // Not very safe
+
+        li.innerHTML = `[${localTime}]<br>${formattedText}`;
         list.appendChild(li);
     });
+
+    list.scrollTop = list.scrollHeight; // Annoyingly scrolls you back to the newest message
 }
+
+const textarea = document.getElementById('msg');
+
+function resizeTextArea() {
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+}
+
+textarea.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') {
+        if (e.shiftKey) return;
+        
+        e.preventDefault();
+        send();
+    }
+});
+
+textarea.addEventListener('input', resizeTextArea);
 
 load();
