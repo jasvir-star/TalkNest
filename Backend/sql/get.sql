@@ -1,1 +1,1 @@
-SELECT * FROM messages ORDER BY created_at ASC;
+SELECT content, username, created_at FROM messages ORDER BY created_at ASC;

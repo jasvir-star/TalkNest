@@ -3,7 +3,7 @@ services:
     image: postgres:15
     env_file: .env
     volumes:
-      - chaticus-data:/var/lib/postgresql/data
+      - TalkNest-data:/var/lib/postgresql/data
       - ./Database:/docker-entrypoint-initdb.d
     networks:
       - backend
@@ -21,6 +21,8 @@ services:
   backend:
     build:
       context: ./Backend
+    ports:
+      - "3000:3000"
     depends_on:
       - postgres
     networks:
@@ -42,4 +44,4 @@ networks:
   backend:
 
 volumes:
-  chaticus-data:
+  TalkNest-data:

@@ -1,1 +1,1 @@
-INSERT INTO messages (content) VALUES ($1);
+INSERT INTO messages (content, username) VALUES ($1, $2);

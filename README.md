@@ -88,7 +88,6 @@ Once logged in, add a new server:
 
 ---
 
-
 ## 🧪 Sample Data
 
 Loaded via Database/001_content.sql:
@@ -104,4 +103,3 @@ I faced a lot of problems while completing this assignment from the beginning to
 ---
 
 *THANKS*
-

@@ -1,4 +1,4 @@
 INSERT INTO messages (content) VALUES
-('Welcome to Chaticus!'),
-('This is a demo message.'),
+('Hey everyone, welcome to TalkNest!'),
+('Glad to be here. This looks awesome.'),
 ('Have a great day 👋');
