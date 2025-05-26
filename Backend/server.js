@@ -5,54 +5,50 @@ const fs = require('fs');
 const path = require('path');
 const app = express();
 
-// Middleware setup
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Load SQL queries from files
+// Load SQL files
 const postQuery = fs.readFileSync(path.join(__dirname, 'sql', 'post.sql'), 'utf8');
 const getQuery = fs.readFileSync(path.join(__dirname, 'sql', 'get.sql'), 'utf8');
 
-// Database connection setup
+// PostgreSQL connection
 const pool = new Pool({
-    host: 'postgres', // Docker container name for PostgreSQL
-    user: 'joal',     // Database username
-    password: 'password123', // Database password
-    database: 'TalkNest', // Database name
+    host: 'postgres', // service name from docker-compose
+    user: 'joal',
+    password: 'password123',
+    database: 'TalkNest',
 });
 
-// Post route to add messages to the database
+// POST /chat → Add a new message
 app.post('/chat', async (req, res) => {
     try {
-        const { username, message } = req.body;  // Expecting message and username
-        
-        // Ensure both message and username are provided
+        const { username, message } = req.body;
+
         if (!username || !message) {
-            return res.status(400).send('Message and username are required');
+            return res.status(400).json({ error: 'Message and username are required' });
         }
 
-        // Insert message into the database
         await pool.query(postQuery, [username, message]);
-        res.status(201).send('Message posted successfully');
+        res.status(201).json({ message: 'Message posted successfully' });
     } catch (error) {
-        console.error('Error posting message:', error);
-        res.status(500).send('Server error');
+        console.error('❌ Error posting message:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-// Get route to retrieve all chat messages
+// GET /chat → Return all messages
 app.get('/chat', async (_, res) => {
     try {
-        // Retrieve messages from the database
-        const { rows } = await pool.query(getQuery);
-        res.json(rows);  // Return messages as JSON
+        const result = await pool.query(getQuery);
+        res.json(result.rows); // Array of messages
     } catch (error) {
-        console.error('Error retrieving messages:', error);
-        res.status(500).send('Server error');
+        console.error('❌ Error retrieving messages:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 });
 
-// Start the server
 app.listen(3000, () => {
-    console.log('Server listening on port 3000.');
+    console.log('🚀 Server running on http://localhost:3000');
 });
